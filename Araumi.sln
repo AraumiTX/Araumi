@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EC78E462-38AD-49CD-ADD2-97C63D7C5C7F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		README.md = README.md
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Araumi.Server", "Araumi.Server\Araumi.Server.csproj", "{AE439E65-FCE8-4522-9260-3AEAA7A7D0E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Araumi.Server.Cli", "Araumi.Server.Cli\Araumi.Server.Cli.csproj", "{31D4C84F-1A60-4A64-A86A-EC897464E7D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE439E65-FCE8-4522-9260-3AEAA7A7D0E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE439E65-FCE8-4522-9260-3AEAA7A7D0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE439E65-FCE8-4522-9260-3AEAA7A7D0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE439E65-FCE8-4522-9260-3AEAA7A7D0E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31D4C84F-1A60-4A64-A86A-EC897464E7D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31D4C84F-1A60-4A64-A86A-EC897464E7D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31D4C84F-1A60-4A64-A86A-EC897464E7D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31D4C84F-1A60-4A64-A86A-EC897464E7D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
