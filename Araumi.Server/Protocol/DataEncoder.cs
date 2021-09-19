@@ -49,7 +49,7 @@ namespace Araumi.Server.Protocol {
     private void EncodeLength(int length) {
       switch(length) {
         case < 0: {
-          throw new IndexOutOfRangeException("length=" + length);
+          throw new OverflowException($"Cannot encode length: {length}");
         }
 
         case < 0x80: {

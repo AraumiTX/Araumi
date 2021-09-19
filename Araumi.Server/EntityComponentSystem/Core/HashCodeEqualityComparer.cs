@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 namespace Araumi.Server.EntityComponentSystem.Core {
-	public sealed class HashCodeEqualityComparer<T> : IEqualityComparer<T> {
+	public sealed class HashCodeEqualityComparer<T> : IEqualityComparer<T> where T : class {
 		public bool Equals(T? left, T? right) {
 			if(ReferenceEquals(left, right)) return true;
 			if(ReferenceEquals(left, null)) return false;

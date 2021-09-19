@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using Araumi.Server.Protocol.Commands;
@@ -34,32 +34,22 @@ namespace Araumi.Server.EntityComponentSystem.Core {
       Id = id;
     }
 
-    /// <summary>
-    /// Get component by type.
-    /// </summary>
-    /// <returns>
-    /// Component, or null if it does not exist.
-    /// </returns>
     public T? GetComponent<T>() where T : Component => GetComponent(typeof(T)) as T;
 
-    /// <summary>
-    /// Get component by type.
-    /// </summary>
-    /// <returns>
-    /// Component, or null if it does not exist.
-    /// </returns>
-    public Component? GetComponent(Type componentType) {
-      Components.TryGetValue((Component)FormatterServices.GetUninitializedObject(componentType), out Component? component);
+    public Component? GetComponent(Type type) {
+      Components.TryGetValue((Component)FormatterServices.GetUninitializedObject(type), out Component? component);
       return component;
     }
 
     public bool HasComponent<T>() where T : Component => HasComponent(typeof(T));
-    public bool HasComponent(Type componentType) => GetComponent(componentType) != null;
+    public bool HasComponent(Type type) => GetComponent(type) != null;
 
     public void AddComponent(Component component, Player? excludedFromSending = null) {
       if(!Components.Add(component)) throw new ArgumentException("Entity already contains component", component.GetType().FullName);
-      foreach(Player player in PlayerReferences.Where(x => x != excludedFromSending))
+
+      foreach(Player player in PlayerReferences.Where((player) => player != excludedFromSending)) {
         player.Connection.QueueCommands(new ComponentAddCommand(this, component));
+      }
     }
 
     public void AddOrChangeComponent(Component component, Player? excludedFromSending = null) {
@@ -74,42 +64,41 @@ namespace Araumi.Server.EntityComponentSystem.Core {
     }
 
     public void ChangeComponent(Component component, Player? excludedFromSending = null) {
-      if(!Components.Remove(component)) throw new ArgumentException("Component " + component.GetType().FullName + " does not exist.");
-
+      if(!Components.Remove(component)) throw new ArgumentException($"Component {component.GetType()} does not exist");
       Components.Add(component);
 
-      foreach(Player player in PlayerReferences.Where(x => x != excludedFromSending))
+      foreach(Player player in PlayerReferences.Where((player) => player != excludedFromSending)) {
         player.Connection.QueueCommands(new ComponentChangeCommand(this, component));
+      }
     }
 
     public void ChangeComponent<T>() where T : Component {
-      T component = GetComponent<T>() ?? throw new ArgumentException("Component was not found", typeof(T).Name);
+      T component = GetComponent<T>() ?? throw new ArgumentException($"Component {typeof(T)} does not exist");
       ChangeComponent(component);
     }
 
     public void ChangeComponent<T>(Action<T> action) where T : Component {
-      T component = GetComponent<T>() ?? throw new ArgumentException("Component was not found", typeof(T).Name);
+      T component = GetComponent<T>() ?? throw new ArgumentException($"Component {typeof(T)} does not exist");
       action(component);
       ChangeComponent(component);
     }
 
     public void RemoveComponent<T>() where T : Component => RemoveComponent(typeof(T));
 
-    public void RemoveComponent(Type componentType, Player? excludedFromSending = null) {
-      if(!TryRemoveComponent(componentType, excludedFromSending)) throw new ArgumentException("Component was not found", componentType.Name);
+    public void RemoveComponent(Type type, Player? excludedFromSending = null) {
+      if(!TryRemoveComponent(type, excludedFromSending)) throw new ArgumentException($"Component {type} does not exist");
     }
 
     public bool TryRemoveComponent<T>() where T : Component => TryRemoveComponent(typeof(T));
 
-    public bool TryRemoveComponent(Type componentType, Player? excludedFromSending = null) {
-      bool successful = Components.Remove((Component)FormatterServices.GetUninitializedObject(componentType));
+    public bool TryRemoveComponent(Type type, Player? excludedFromSending = null) {
+      if(!Components.Remove((Component)FormatterServices.GetUninitializedObject(type))) return false;
 
-      if(successful) {
-        foreach(Player player in PlayerReferences.Where(x => x != excludedFromSending))
-          player.Connection.QueueCommands(new ComponentRemoveCommand(this, componentType));
+      foreach(Player player in PlayerReferences.Where((player) => player != excludedFromSending)) {
+        player.Connection.QueueCommands(new ComponentRemoveCommand(this, type));
       }
 
-      return successful;
+      return true;
     }
   }
 }
