@@ -18,12 +18,15 @@ namespace Araumi.Server.Cli {
         ServiceManager.Instance.Init();
         ServiceManager.Instance.Container.Resolve<ILoggerService>().Init();
         await ServiceManager.Instance.Container.Resolve<IConfigService>().Init();
+        await ServiceManager.Instance.Container.Resolve<IDatabaseService>().Init();
         await ServiceManager.Instance.Container.Resolve<IClientConfigService>().Init();
         await ServiceManager.Instance.Container.Resolve<IStaticServer>().Start();
         await ServiceManager.Instance.Container.Resolve<IGameServer>().Start();
 
         await ServiceManager.Instance.Container.Resolve<IExitWaitService>().WaitAsync();
         Log.Information("Stopping...");
+
+        await ServiceManager.Instance.Container.Resolve<IDatabaseService>().DisposeAsync();
 
         ServiceManager.Instance.Dispose();
       } catch(Exception exception) {
