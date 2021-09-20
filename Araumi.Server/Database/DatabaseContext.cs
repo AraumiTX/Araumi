@@ -48,7 +48,7 @@ namespace Araumi.Server.Database {
       // ));
       builder.EnableSensitiveDataLogging();
 
-      MySqlConnectionStringBuilder stringBuilder = new MySqlConnectionStringBuilder {
+      MySqlConnectionStringBuilder stringBuilder = new MySqlConnectionStringBuilder() {
         Server = _config.Host,
         Port = (uint)_config.Port,
         UserID = _config.Username,

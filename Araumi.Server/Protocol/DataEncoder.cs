@@ -126,7 +126,7 @@ namespace Araumi.Server.Protocol {
     public void EncodeMoveCommand(MoveCommand command) {
       bool hasMovement = command.Movement != null;
       bool hasWeaponRotation = command.WeaponRotation != null;
-      bool isDiscrete = command.IsDiscrete();
+      bool isDiscrete = command.IsDiscrete;
 
       _optionalMap.Add(hasMovement);
       _optionalMap.Add(hasWeaponRotation);
@@ -136,7 +136,7 @@ namespace Araumi.Server.Protocol {
         DiscreteTankControl control = new DiscreteTankControl() {
           MoveAxis = (int)command.TankControlVertical,
           TurnAxis = (int)command.TankControlHorizontal,
-          WeaponControl = (int)command.WeaponRotationControl,
+          WeaponControl = (int)command.WeaponRotationControl
         };
 
         _writer.Write(control.Control);

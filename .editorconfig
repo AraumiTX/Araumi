@@ -235,7 +235,8 @@ resharper_keep_existing_enum_arrangement = false
 resharper_max_attribute_length_for_same_line = 100
 resharper_max_enum_members_on_line = 1
 resharper_max_initializer_elements_on_line = 8
-resharper_method_or_operator_body = block_body
+resharper_local_function_body = expression_body
+resharper_method_or_operator_body = expression_body
 resharper_normalize_tag_names = true
 resharper_no_indent_inside_elements = html
 resharper_place_simple_initializer_on_single_line = false
@@ -250,7 +251,7 @@ resharper_xmldoc_tab_width = 2
 
 # ReSharper inspection severities
 resharper_arrange_accessor_owner_body_highlighting = suggestion
-resharper_arrange_object_creation_when_type_evident_highlighting = none
+resharper_arrange_object_creation_when_type_evident_highlighting = error
 resharper_arrange_redundant_parentheses_highlighting = hint
 resharper_arrange_this_qualifier_highlighting = hint
 resharper_arrange_type_member_modifiers_highlighting = hint

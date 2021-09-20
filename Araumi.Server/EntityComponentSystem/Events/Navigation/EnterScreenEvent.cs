@@ -8,12 +8,12 @@ using Serilog;
 namespace Araumi.Server.EntityComponentSystem.Events.Navigation {
   [TypeUid(1453867134827)]
   public class EnterScreenEvent : IEvent {
+    private static readonly ILogger Logger = Log.Logger.ForType<EnterScreenEvent>();
+
     public const string EntranceScreen = "EntranceScreen";
     public const string RegistrationScreen = "RegistrationScreen";
     public const string MainScreen = "MainScreen";
     public const string PasswordResetEmailScreen = "EnterUserEmailScreenComponent";
-
-    private static readonly ILogger Logger = Log.Logger.ForType<EnterScreenEvent>();
 
     public string Screen { get; set; } = null!;
 

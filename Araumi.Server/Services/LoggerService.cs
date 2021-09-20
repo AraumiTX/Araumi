@@ -63,14 +63,14 @@ namespace Araumi.Server.Services {
 
     public void Init() {
       LoggerConfiguration config = new LoggerConfiguration()
-        .MinimumLevel.ControlledBy(_level)
-        .Enrich.WithThreadId()
-        .Enrich.WithThreadName()
-        .Enrich.FromLogContext()
-        .WriteTo.Console(new ExpressionTemplate(
-          "[{@t:HH:mm:ss.fff}] ({ThreadId}{#if ThreadName is not null}/{ThreadName}{#end}) [{@l}] {#if SourceContext is not null}[{SourceContext}] {#end}{#if @p['PlayerLogDisplay'] is not null}[{@p['PlayerLogDisplay']}] {#end}{@m:lj}\n{@x}",
-          theme: Theme
-        ))
+          .MinimumLevel.ControlledBy(_level)
+          .Enrich.WithThreadId()
+          .Enrich.WithThreadName()
+          .Enrich.FromLogContext()
+          .WriteTo.Console(new ExpressionTemplate(
+            "[{@t:HH:mm:ss.fff}] ({ThreadId}{#if ThreadName is not null}/{ThreadName}{#end}) [{@l}] {#if SourceContext is not null}[{SourceContext}] {#end}{#if @p['PlayerLogDisplay'] is not null}[{@p['PlayerLogDisplay']}] {#end}{@m:lj}\n{@x}",
+            theme: Theme
+          ))
         /* .WriteTo.File(
           "Araumi.Server.log",
           rollingInterval: RollingInterval.Day,

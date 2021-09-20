@@ -14,4 +14,3 @@ namespace Araumi.Server.EntityComponentSystem.Templates.Entrance {
     }
   }
 }
-

@@ -10,7 +10,10 @@ namespace Araumi.Server.Protocol.Exceptions {
 
     public override string Message => $"Invalid packet header. Expected data: {GetHex(ExpectedData)}. Actual data: {GetHex(ActualData)}.";
 
-    public InvalidPacketHeaderException(byte[] expectedData, byte[] actualData, bool isHttp, Exception? innerException = null) : base(null, innerException) {
+    public InvalidPacketHeaderException(
+      byte[] expectedData, byte[] actualData, bool isHttp,
+      Exception? innerException = null
+    ) : base(null, innerException) {
       ExpectedData = expectedData;
       ActualData = actualData;
       IsHttp = isHttp;

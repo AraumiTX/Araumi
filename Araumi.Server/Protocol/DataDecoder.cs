@@ -153,14 +153,8 @@ namespace Araumi.Server.Protocol {
       if(type == typeof(Movement)) return DecodeMovement();
       if(type == typeof(Type)) return DecodeType();
       if(type == typeof(DateTime)) return DecodeDateTime();
-
-      if(type.IsEnum) {
-        return Enum.ToObject(type, _reader.ReadByte());
-      }
-
-      if(type == typeof(Entity)) {
-        return DecodeEntity(player);
-      }
+      if(type.IsEnum) return Enum.ToObject(type, _reader.ReadByte());
+      if(type == typeof(Entity)) return DecodeEntity(player);
 
       // if(typeof(DateTimeOffset).IsAssignableFrom(objType)) {
       //   long time = _reader.ReadInt64();
@@ -171,13 +165,11 @@ namespace Araumi.Server.Protocol {
       //   throw new NotImplementedException();
       // }
 
-      if(type.IsArray || (type.IsGenericType && typeof(ICollection<>).MakeGenericType(type.GetGenericArguments()[0]).IsAssignableFrom(type))) {
+      if(type.IsArray || type.IsGenericType && typeof(ICollection<>).MakeGenericType(type.GetGenericArguments()[0]).IsAssignableFrom(type)) {
         return await DecodeCollection(type, player);
       }
 
-      if(typeof(ICommand).IsAssignableFrom(type)) {
-        return await DecodeCommand(player);
-      }
+      if(typeof(ICommand).IsAssignableFrom(type)) return await DecodeCommand(player);
 
       if(type.IsAbstract || type.IsInterface) {
         type = DecodeType();
@@ -198,8 +190,8 @@ namespace Araumi.Server.Protocol {
           object? item = await SelectDecode(elementType, player);
 
           if(elementType == typeof(Entity) && item == null) {
-          	IsCommandIgnored = true;
-          	continue;
+            IsCommandIgnored = true;
+            continue;
           }
 
           array.SetValue(item, index);
@@ -237,8 +229,8 @@ namespace Araumi.Server.Protocol {
 
         object? value = await SelectDecode(property.PropertyType, player);
         if(property.PropertyType == typeof(Entity) && value == null) {
-        	IsCommandIgnored = true;
-        	continue;
+          IsCommandIgnored = true;
+          continue;
         }
 
         property.SetValue(instance, value);
@@ -282,8 +274,8 @@ namespace Araumi.Server.Protocol {
       while(dataReader.BaseStream.Position != dataLength) {
         ICommand? command = await dataDecoder.SelectDecode<ICommand>(player);
         if(dataDecoder.IsCommandIgnored) {
-        	dataDecoder.IsCommandIgnored = false;
-        	continue;
+          dataDecoder.IsCommandIgnored = false;
+          continue;
         }
 
         if(command == null) throw new InvalidOperationException("Failed to decode command");

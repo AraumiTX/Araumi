@@ -23,13 +23,13 @@ namespace Araumi.Server.Protocol {
         _data.Add(0);
         Length += 8;
       }
-      _data[Position / 8] |= (byte)(Convert.ToInt32(isNull) << (7 - Position++ % 8));
+      _data[Position / 8] |= (byte)(Convert.ToInt32(isNull) << 7 - Position++ % 8);
     }
 
     public bool Read() {
       if(Position >= Length)
         throw new IndexOutOfRangeException("Index was out of range. Must be non-negative and less than the size of the OptionalMap.");
-      return Convert.ToBoolean((_data[Position / 8] >> (7 - Position++ % 8)) & 1);
+      return Convert.ToBoolean(_data[Position / 8] >> 7 - Position++ % 8 & 1);
     }
 
     public void Rewind() {

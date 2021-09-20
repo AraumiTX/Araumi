@@ -12,7 +12,7 @@ namespace Araumi.Server.Protocol.Commands {
   public class EntityShareCommand : ICommand {
     [ProtocolIgnore] public Entity Entity { get; }
 
-    [ProtocolFixed(0)] public Int64 EntityId { get; }
+    [ProtocolFixed(0)] public long EntityId { get; }
     [ProtocolFixed(1)] [ProtocolOptional] public TemplateAccessor? TemplateAccessor { get; }
     [ProtocolFixed(2)] public IReadOnlyCollection<Component> Components { get; }
 
