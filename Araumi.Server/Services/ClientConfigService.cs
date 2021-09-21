@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
@@ -14,60 +15,69 @@ using Araumi.Server.Extensions;
 namespace Araumi.Server.Services {
   public interface IClientConfigService {
     public Task Init();
-    public MemoryStream GetArchiveStream();
+    public MemoryStream GetArchiveStream(string version);
   }
 
   [Service]
   public class ClientConfigService : IClientConfigService {
     private static readonly ILogger Logger = Log.Logger.ForType<ClientConfigService>();
 
-    public bool IsCreated { get; private set; }
-
-    private byte[]? _buffer;
+    private readonly Dictionary<string, byte[]> _versions;
 
     public ClientConfigService() {
-      _buffer = null;
+      _versions = new Dictionary<string, byte[]>();
     }
 
     public async Task Init() {
-      DirectoryInfo directory = new DirectoryInfo("Static/Config");
-
       Logger.Information("Generating config archives...");
 
-      Stopwatch stopwatch = new Stopwatch();
+      DirectoryInfo rootDirectory = new DirectoryInfo("Static/Config");
+      foreach(DirectoryInfo directory in rootDirectory.EnumerateDirectories()) {
+        string version = directory.Name;
 
-      await using MemoryStream archiveStream = new MemoryStream();
-      await using(GZipOutputStream gzip = new GZipOutputStream(archiveStream)) {
-        await using TarOutputStream tar = new TarOutputStream(gzip, Encoding.UTF8);
+        Logger.Debug("Generating config archive for version {Version}...", version);
 
-        stopwatch.Start();
-        foreach(FileInfo file in directory.EnumerateFiles("*.*", SearchOption.AllDirectories)) {
-          string path = Path.GetRelativePath(directory.FullName, file.FullName).TrimStart('/');
+        Stopwatch stopwatch = new Stopwatch();
 
-          MemoryStream fileStream = await file.ReadAsync();
-          TarEntry entry = TarEntry.CreateTarEntry(path);
+        await using MemoryStream archiveStream = new MemoryStream();
+        await using(GZipOutputStream gzip = new GZipOutputStream(archiveStream)) {
+          await using TarOutputStream tar = new TarOutputStream(gzip, Encoding.UTF8);
 
-          entry.Size = fileStream.Length;
+          stopwatch.Start();
+          foreach(FileInfo file in directory.EnumerateFiles("*.*", SearchOption.AllDirectories)) {
+            string path = Path.GetRelativePath(directory.FullName, file.FullName).TrimStart('/');
 
-          tar.PutNextEntry(entry);
-          await fileStream.CopyToAsync(tar);
+            MemoryStream fileStream = await file.ReadAsync();
+            TarEntry entry = TarEntry.CreateTarEntry(path);
 
-          tar.CloseEntry();
+            entry.Size = fileStream.Length;
+
+            tar.PutNextEntry(entry);
+            await fileStream.CopyToAsync(tar);
+
+            tar.CloseEntry();
+          }
+          stopwatch.Stop();
         }
-        stopwatch.Stop();
+
+        _versions.Add(version, archiveStream.ToArray());
+
+        Logger.Debug(
+          "Generated config archive for version {Version} in {Duration} ms",
+          version,
+          stopwatch.ElapsedMilliseconds
+        );
       }
-
-      _buffer = archiveStream.ToArray();
-      IsCreated = true;
-
-      Logger.Debug("Generated config archive in {Duration} ms", stopwatch.ElapsedMilliseconds);
 
       Logger.Information("Initialized");
     }
 
-    public MemoryStream GetArchiveStream() {
-      if(_buffer == null) throw new InvalidOperationException("Config archive is not created");
-      return new MemoryStream(_buffer);
+    public MemoryStream GetArchiveStream(string version) {
+      if(!_versions.TryGetValue(version, out byte[]? buffer)) {
+        throw new InvalidOperationException($"Config archive for version {version} is not initialized");
+      }
+
+      return new MemoryStream(buffer);
     }
   }
 }

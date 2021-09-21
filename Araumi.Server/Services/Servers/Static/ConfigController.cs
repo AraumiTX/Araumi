@@ -109,9 +109,7 @@ namespace Araumi.Server.Services.Servers.Static {
         language
       );
 
-      if(version != "master-48606") throw HttpException.BadRequest($"Incorrect version: {version}");
-
-      await Response.SendBinary(_clientConfigService.GetArchiveStream());
+      await Response.SendBinary(_clientConfigService.GetArchiveStream(version));
     }
   }
 }
