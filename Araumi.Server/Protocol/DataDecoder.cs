@@ -39,12 +39,11 @@ namespace Araumi.Server.Protocol {
       _optionalMap = optionalMap;
     }
 
-    public object DecodePrimitive(object value) {
+    public object DecodePrimitive(Type type) {
       Type readerType = _reader.GetType();
-      Type valueType = value.GetType();
 
-      MethodInfo? method = readerType.GetMethod($"Read{valueType.Name}");
-      if(method == null) throw new NotSupportedException($"Cannot decode type: {valueType.FullName}");
+      MethodInfo? method = readerType.GetMethod($"Read{type.Name}");
+      if(method == null) throw new NotSupportedException($"Cannot decode type: {type}");
 
       return method.Invoke(_reader, Array.Empty<object>());
     }
